@@ -224,6 +224,8 @@ class SchemingDatasetsPlugin(p.SingletonPlugin, DefaultDatasetForm,
         Validate and convert for package_create, package_update and
         package_show actions.
         """
+        if data_dict.get('__parent'):
+            return
         thing, action_type = action.split('_')
         t = data_dict.get('type')
         if not t or t not in self._schemas:
