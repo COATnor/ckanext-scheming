@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
-from mock import patch, Mock
+try:
+    from unittest.mock import patch, Mock
+except ImportError:
+    from mock import patch, Mock
+
 import datetime
 import six
 
@@ -54,7 +58,7 @@ class TestFieldRequired(object):
         assert not scheming_field_required({"required": False})
 
     def test_not_empty_in_validators(self):
-        assert scheming_field_required({"validators": "not_empty unicode"})
+        assert scheming_field_required({"validators": "not_empty unicode_safe"})
 
     def test_not_empty_not_in_validators(self):
         assert not scheming_field_required({"validators": "maybe_not_empty"})
@@ -80,6 +84,8 @@ class TestGetPreset(object):
                 u'dataset_slug',
                 u'dataset_organization',
                 u'json_object',
+                u'markdown',
+                u'radio',
             )
         ) == sorted(presets.keys())
 
@@ -169,8 +175,13 @@ class TestDatastoreChoices(object):
                 "datastore_choices_resource": "all-params",
                 "datastore_choices_limit": 5,
                 "datastore_choices_columns": {"value": "a", "label": "b"},
+                "datastore_additional_choices":
+                    [{"value": "none", "label": "None"},
+                     {"value": "na", "label": "N/A"}]
             }
         ) == [
+            {"value": "none", "label": "None"},
+            {"value": "na", "label": "N/A"},
             {"value": "one", "label": "two"},
             {"value": "three", "label": "four"},
         ]
